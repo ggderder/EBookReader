@@ -97,8 +97,8 @@ object TextFilter {
             val bounds = Rect()
             node.getBoundsInScreen(bounds)
             val className = node.className?.toString() ?: ""
-            // textSize 可能返回 -1（不可用），用 bounds 高度估算
-            val fontSize = node.textSize.takeIf { it > 0 } ?: (bounds.height().toFloat() * 0.8f)
+            // 用 bounds 高度估算字号（正文行高通常为字号的 1.2~1.5 倍）
+            val fontSize = bounds.height().toFloat() * 0.75f
 
             out.add(TextFragment(text, fontSize, bounds, className))
         }

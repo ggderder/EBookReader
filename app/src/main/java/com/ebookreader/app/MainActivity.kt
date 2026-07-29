@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
         startActivity(intent)
         android.widget.Toast.makeText(this,
-            "在列表中找到"听书助手"并开启", android.widget.Toast.LENGTH_LONG).show()
+            "在列表中找到听书助手并开启", android.widget.Toast.LENGTH_LONG).show()
     }
 
     private fun requestOverlayPermission() {
