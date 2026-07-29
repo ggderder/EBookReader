@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:background="#F5F5F5">
+
+    <TextView
+        android:layout_width="240dp"
+        android:layout_height="240dp"
+        android:background="@drawable/ic_launcher_foreground"
+        android:gravity="center"
+        android:text="📖"
+        android:textSize="120sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="听书助手"
+        android:textSize="28sp"
+        android:textColor="#333"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="自动识别阅读App中的文字\n过滤无关信息，流畅朗读"
+        android:textSize="15sp"
+        android:textColor="#888"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:lineSpacingExtra="4dp" />
+
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="辅助功能已关闭"
+        android:textSize="14sp"
+        android:textColor="#e74c3c"
+        android:layout_marginTop="32dp" />
+
+    <Button
+        android:id="@+id/btn_open_accessibility"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="开启辅助功能"
+        android:textSize="16sp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="#e74c3c" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="使用说明：\n\n1. 点击上方按钮开启辅助功能\n2. 打开任意阅读 App\n3. 点击悬浮按钮 ▶ 开始听书\n4. 翻页后自动朗读新内容"
+        android:textSize="13sp"
+        android:textColor="#aaa"
+        android:layout_marginTop="24dp"
+        android:lineSpacingExtra="6dp" />
+
+</LinearLayout>
