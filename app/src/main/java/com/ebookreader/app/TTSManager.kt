@@ -1,6 +1,7 @@
 package com.ebookreader.app
 
 import android.content.Context
+import android.content.Intent
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import java.util.Locale
@@ -35,36 +36,43 @@ class TTSManager(context: Context) {
 
     private fun initTTS(context: Context) {
         tts = TextToSpeech(context) { status ->
-            isReady = (status == TextToSpeech.SUCCESS)
-            if (isReady) {
-                // 尝试多个中文 Locale，找到第一个可用的
-                val locales = listOf(
-                    Locale.SIMPLIFIED_CHINESE,
-                    Locale.CHINESE,
-                    Locale.CHINA,
-                    Locale("zh"),
-                    Locale.TRADITIONAL_CHINESE
-                )
-                var ok = false
-                for (loc in locales) {
-                    val result = tts?.setLanguage(loc) ?: TextToSpeech.LANG_MISSING_DATA
-                    if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
-                        ok = true
-                        break
-                    }
-                }
-                if (!ok) {
-                    isReady = false
-                    initError = "未找到中文语音包，请在手机设置中安装文字转语音(中文)"
-                    onStatusChanged?.invoke(Status.ERROR)
-                    return@TextToSpeech
-                }
-                tts?.setSpeechRate(speed)
-                onStatusChanged?.invoke(Status.READY)
-            } else {
-                initError = "TTS引擎初始化失败"
+            if (status != TextToSpeech.SUCCESS) {
+                // 检查系统是否有 TTS 引擎
+                val intent = Intent()
+                intent.action = TextToSpeech.Engine.ACTION_CHECK_TTS_DATA
+                initError = "TTS引擎未安装。请从应用商店安装 Google文字转语音"
+                isReady = false
                 onStatusChanged?.invoke(Status.ERROR)
+                return@TextToSpeech
             }
+
+            // 尝试多个中文 Locale
+            val locales = listOf(
+                Locale.SIMPLIFIED_CHINESE,
+                Locale.CHINESE,
+                Locale.CHINA,
+                Locale("zh"),
+                Locale.TRADITIONAL_CHINESE
+            )
+            var ok = false
+            for (loc in locales) {
+                val result = tts?.setLanguage(loc) ?: TextToSpeech.LANG_MISSING_DATA
+                if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
+                    ok = true
+                    break
+                }
+            }
+
+            if (!ok) {
+                isReady = false
+                initError = "缺少中文语音数据。请安装 Google文字转语音 并下载中文离线包"
+                onStatusChanged?.invoke(Status.ERROR)
+                return@TextToSpeech
+            }
+
+            isReady = true
+            tts?.setSpeechRate(speed)
+            onStatusChanged?.invoke(Status.READY)
         }
 
         tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.speech.tts.TextToSpeech
 import android.view.accessibility.AccessibilityManager
 import android.widget.Button
 import android.widget.TextView
@@ -36,16 +37,29 @@ class MainActivity : AppCompatActivity() {
     private fun checkAccessibilityStatus() {
         val enabled = isAccessibilityServiceEnabled()
         if (enabled) {
-            // 检查 TTS 状态
             val ttsError = ReaderAccessibilityService.instance?.tts?.initError
             if (ttsError != null) {
-                tvStatus.text = "$ttsError"
+                tvStatus.text = ttsError
                 tvStatus.setTextColor(resources.getColor(android.R.color.holo_orange_dark, theme))
+                btnAccessibility.text = "安装文字转语音引擎"
+                btnAccessibility.setOnClickListener {
+                    try {
+                        // 尝试打开 Google TTS 下载页
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(
+                            "market://details?id=com.google.android.tts")))
+                    } catch (e: Exception) {
+                        // Play 商店不可用，打开 TTS 设置
+                        startActivity(Intent().apply {
+                            action = TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA
+                        })
+                    }
+                }
             } else {
-                tvStatus.text = "就绪 ✅ 打开阅读App后点悬浮按钮播放"
+                tvStatus.text = "就绪 打开阅读App后点悬浮按钮播放"
                 tvStatus.setTextColor(resources.getColor(android.R.color.holo_green_dark, theme))
+                btnAccessibility.text = "重新配置"
+                btnAccessibility.setOnClickListener { openAccessibilitySettings() }
             }
-            btnAccessibility.text = "重新配置"
             if (!Settings.canDrawOverlays(this)) {
                 requestOverlayPermission()
             }
@@ -53,6 +67,7 @@ class MainActivity : AppCompatActivity() {
             tvStatus.text = "辅助功能未开启"
             tvStatus.setTextColor(resources.getColor(android.R.color.holo_red_dark, theme))
             btnAccessibility.text = "开启辅助功能"
+            btnAccessibility.setOnClickListener { openAccessibilitySettings() }
         }
     }
 
