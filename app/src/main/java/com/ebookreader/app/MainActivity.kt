@@ -36,10 +36,16 @@ class MainActivity : AppCompatActivity() {
     private fun checkAccessibilityStatus() {
         val enabled = isAccessibilityServiceEnabled()
         if (enabled) {
-            tvStatus.text = "辅助功能已开启 ✅"
-            tvStatus.setTextColor(resources.getColor(android.R.color.holo_green_dark, theme))
+            // 检查 TTS 状态
+            val ttsError = ReaderAccessibilityService.instance?.tts?.initError
+            if (ttsError != null) {
+                tvStatus.text = "$ttsError"
+                tvStatus.setTextColor(resources.getColor(android.R.color.holo_orange_dark, theme))
+            } else {
+                tvStatus.text = "就绪 ✅ 打开阅读App后点悬浮按钮播放"
+                tvStatus.setTextColor(resources.getColor(android.R.color.holo_green_dark, theme))
+            }
             btnAccessibility.text = "重新配置"
-            // 引导用户打开悬浮窗权限
             if (!Settings.canDrawOverlays(this)) {
                 requestOverlayPermission()
             }

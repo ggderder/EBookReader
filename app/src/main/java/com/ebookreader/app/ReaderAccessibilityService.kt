@@ -30,7 +30,7 @@ class ReaderAccessibilityService : AccessibilityService() {
         const val ACTION_SPEED = "speed"
     }
 
-    private lateinit var tts: TTSManager
+    lateinit var tts: TTSManager
     private var isAutoReading = false       // 是否启用了自动朗读
     private var lastTextHash = 0             // 上一页文字哈希（用于检测翻页）
     private var screenHeight = 0
@@ -131,19 +131,34 @@ class ReaderAccessibilityService : AccessibilityService() {
      * 手动触发朗读当前页面
      */
     fun readCurrentPage() {
-        val root = rootInActiveWindow ?: return
+        val root = rootInActiveWindow
+        if (root == null) {
+            android.widget.Toast.makeText(this, "无法获取屏幕内容，请确认辅助功能已开启", android.widget.Toast.LENGTH_SHORT).show()
+            return
+        }
         val fragments = TextFilter.extractBodyText(root, screenHeight)
         root.recycle()
 
         if (fragments.isEmpty()) {
-            android.widget.Toast.makeText(this, "未检测到可读文字，请打开阅读App", android.widget.Toast.LENGTH_SHORT).show()
+            android.widget.Toast.makeText(this, "未检测到可读文字，请切换到阅读App页面", android.widget.Toast.LENGTH_SHORT).show()
             return
         }
 
         currentTextFragments = fragments.map { it.text }
         val textToRead = currentTextFragments.joinToString("")
+
+        // 提示用户抓到了多少文字
+        val preview = if (textToRead.length > 30) textToRead.take(30) + "..." else textToRead
+        android.widget.Toast.makeText(this, "朗读: $preview", android.widget.Toast.LENGTH_SHORT).show()
+
         if (textToRead.isNotBlank()) {
-            tts.speakImmediately(textToRead)
+            if (!tts.isActive()) {
+                tts.speakImmediately(textToRead)
+            } else {
+                tts.speakImmediately(textToRead)
+            }
+        } else {
+            android.widget.Toast.makeText(this, "过滤后无可读文字", android.widget.Toast.LENGTH_SHORT).show()
         }
     }
 

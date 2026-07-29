@@ -30,14 +30,39 @@ class TTSManager(context: Context) {
         initTTS(context)
     }
 
+    var initError: String? = null
+        private set
+
     private fun initTTS(context: Context) {
         tts = TextToSpeech(context) { status ->
             isReady = (status == TextToSpeech.SUCCESS)
             if (isReady) {
-                tts?.language = Locale.CHINESE
+                // 尝试多个中文 Locale，找到第一个可用的
+                val locales = listOf(
+                    Locale.SIMPLIFIED_CHINESE,
+                    Locale.CHINESE,
+                    Locale.CHINA,
+                    Locale("zh"),
+                    Locale.TRADITIONAL_CHINESE
+                )
+                var ok = false
+                for (loc in locales) {
+                    val result = tts?.setLanguage(loc) ?: TextToSpeech.LANG_MISSING_DATA
+                    if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
+                        ok = true
+                        break
+                    }
+                }
+                if (!ok) {
+                    isReady = false
+                    initError = "未找到中文语音包，请在手机设置中安装文字转语音(中文)"
+                    onStatusChanged?.invoke(Status.ERROR)
+                    return@TextToSpeech
+                }
                 tts?.setSpeechRate(speed)
                 onStatusChanged?.invoke(Status.READY)
             } else {
+                initError = "TTS引擎初始化失败"
                 onStatusChanged?.invoke(Status.ERROR)
             }
         }
