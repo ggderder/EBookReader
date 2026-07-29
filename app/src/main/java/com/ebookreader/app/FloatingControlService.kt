@@ -13,7 +13,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
-import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 
@@ -113,11 +113,11 @@ class FloatingControlService : Service() {
     }
 
     private fun setupButtons(view: View) {
-        val btnPlay: ImageButton = view.findViewById(R.id.btn_play)
-        val btnRewind: ImageButton = view.findViewById(R.id.btn_rewind)
-        val btnSkip: ImageButton = view.findViewById(R.id.btn_skip)
-        val btnSpeed: ImageButton = view.findViewById(R.id.btn_speed)
-        val btnClose: ImageButton = view.findViewById(R.id.btn_close)
+        val btnPlay: TextView = view.findViewById(R.id.btn_play)
+        val btnRewind: TextView = view.findViewById(R.id.btn_rewind)
+        val btnSkip: TextView = view.findViewById(R.id.btn_skip)
+        val btnSpeed: TextView = view.findViewById(R.id.btn_speed)
+        val btnClose: TextView = view.findViewById(R.id.btn_close)
 
         btnPlay.setOnClickListener {
             if (isPlaying) {
@@ -158,16 +158,16 @@ class FloatingControlService : Service() {
     }
 
     fun updatePlayState(status: TTSManager.Status) {
-        val btnPlay = floatingView?.findViewById<ImageButton>(R.id.btn_play)
+        val btnPlay = floatingView?.findViewById<TextView>(R.id.btn_play)
         when (status) {
             TTSManager.Status.SPEAKING -> {
                 isPlaying = true
-                btnPlay?.setImageResource(android.R.drawable.ic_media_pause)
+                btnPlay?.text = "⏸"
                 updateNotification("正在朗读...")
             }
             TTSManager.Status.PAUSED, TTSManager.Status.IDLE -> {
                 isPlaying = false
-                btnPlay?.setImageResource(android.R.drawable.ic_media_play)
+                btnPlay?.text = "▶"
                 updateNotification("已暂停")
             }
             else -> {}

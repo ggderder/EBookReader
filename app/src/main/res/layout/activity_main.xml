@@ -10,7 +10,6 @@
     <TextView
         android:layout_width="240dp"
         android:layout_height="240dp"
-        android:background="@drawable/ic_launcher_foreground"
         android:gravity="center"
         android:text="📖"
         android:textSize="120sp" />
